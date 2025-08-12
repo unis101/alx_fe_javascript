@@ -1,27 +1,24 @@
 let quotes = [
-  { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
-  { text: "Don't let yesterday take up too much of today.", category: "Inspiration" },
-  { text: "It's not whether you get knocked down, it's whether you get up.", category: "Resilience" }
+  { text: "The only way to do great work is to love what you do.", category: "Inspiration" },
+  { text: "Life is what happens when you're busy making other plans.", category: "Life" },
+  { text: "Get busy living or get busy dying.", category: "Motivation" }
 ];
 
 function showRandomQuote() {
-  const randomIndex = Math.floor(Math.random() * quotes.length);
-  document.getElementById("quoteDisplay").innerText =
-    `"${quotes[randomIndex].text}" — ${quotes[randomIndex].category}`;
+  let randomIndex = Math.floor(Math.random() * quotes.length);
+  let randomQuote = quotes[randomIndex];
+  document.getElementById("quoteDisplay").innerHTML = `"${randomQuote.text}" - ${randomQuote.category}`;
 }
 
 function addQuote() {
-  const newText = document.getElementById("newQuoteText").value.trim();
-  const newCategory = document.getElementById("newQuoteCategory").value.trim();
-  if (newText && newCategory) {
-    quotes.push({ text: newText, category: newCategory });
+  let newQuoteText = document.getElementById("newQuoteText").value;
+  let newQuoteCategory = document.getElementById("newQuoteCategory").value;
+
+  if (newQuoteText && newQuoteCategory) {
+    quotes.push({ text: newQuoteText, category: newQuoteCategory });
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
-    showRandomQuote();
   }
 }
 
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
-
-// Show a quote at start
-showRandomQuote();
