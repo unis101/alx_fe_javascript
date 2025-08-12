@@ -85,3 +85,43 @@ function importFromJsonFile(event) {
   };
   fileReader.readAsText(event.target.files[0]);
 }
+
+function fetchQuotesFromServer() {
+  fetch('https://jsonplaceholder.typicode.com/posts?_limit=5') // Limit to 5 for testing
+    .then(response => response.json())
+    .then(serverQuotes => {
+      const formattedQuotes = serverQuotes.map(post => ({
+        text: post.body,
+        category: post.title
+      }));
+
+      const localData = localStorage.getItem('quotes');
+      const localQuotes = localData ? JSON.parse(localData) : [];
+
+      const hasConflict = JSON.stringify(formattedQuotes) !== JSON.stringify(localQuotes);
+
+      if (hasConflict) {
+        quotes = formattedQuotes;
+        saveQuotes();
+        showConflictNotification("Conflicts resolved: Server quotes have replaced local data.");
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching server data:', error);
+    });
+}
+
+function showConflictNotification(message) {
+  const notice = document.createElement('div');
+  notice.textContent = message;
+  notice.style.backgroundColor = '#ffd700';
+  notice.style.color = '#000';
+  notice.style.padding = '10px';
+  notice.style.marginTop = '10px';
+  notice.style.border = '1px solid #ccc';
+  document.body.insertBefore(notice, document.body.firstChild);
+}
+
+setInterval(fetchQuotesFromServer, 30000); // 30,000 ms = 30 seconds
+
+fetchQuotesFromServer();
