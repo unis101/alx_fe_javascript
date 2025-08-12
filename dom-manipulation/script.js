@@ -86,31 +86,6 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);
 }
 
-function fetchQuotesFromServer() {
-  fetch('https://jsonplaceholder.typicode.com/posts?_limit=5') // Limit to 5 for testing
-    .then(response => response.json())
-    .then(serverQuotes => {
-      const formattedQuotes = serverQuotes.map(post => ({
-        text: post.body,
-        category: post.title
-      }));
-
-      const localData = localStorage.getItem('quotes');
-      const localQuotes = localData ? JSON.parse(localData) : [];
-
-      const hasConflict = JSON.stringify(formattedQuotes) !== JSON.stringify(localQuotes);
-
-      if (hasConflict) {
-        quotes = formattedQuotes;
-        saveQuotes();
-        showConflictNotification("Conflicts resolved: Server quotes have replaced local data.");
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching server data:', error);
-    });
-}
-
 function showConflictNotification(message) {
   const notice = document.createElement('div');
   notice.textContent = message;
@@ -122,6 +97,45 @@ function showConflictNotification(message) {
   document.body.insertBefore(notice, document.body.firstChild);
 }
 
-setInterval(fetchQuotesFromServer, 30000); // 30,000 ms = 30 seconds
+async function syncQuotes() {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');
+    const serverData = await response.json();
 
-fetchQuotesFromServer();
+    const serverQuotes = serverData.map(post => ({
+      text: post.body,
+      category: post.title
+    }));
+
+    const localData = localStorage.getItem('quotes');
+    const localQuotes = localData ? JSON.parse(localData) : [];
+
+    const hasConflict = JSON.stringify(serverQuotes) !== JSON.stringify(localQuotes);
+
+    if (hasConflict) {
+      quotes = serverQuotes;
+      saveQuotes();
+      showConflictNotification("Conflict detected: Server data has replaced local data.");
+    }
+
+  } catch (error) {
+    console.error("Error syncing quotes:", error);
+  }
+}
+
+async function postQuotesToServer() {
+  try {
+    await fetch('https://jsonplaceholder.typicode.com/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(quotes)
+    });
+  } catch (error) {
+    console.error("Error posting quotes to server:", error);
+  }
+}
+
+setInterval(syncQuotes, 30000);
+syncQuotes(); // Initial sync
