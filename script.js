@@ -1,7 +1,16 @@
 let quotes = [
-  { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
-  { text: "Life is what happens when you're busy making other plans.", category: "Life" },
-  { text: "The purpose of our lives is to be happy.", category: "Life" }
+  {
+    text: "The best way to get started is to quit talking and begin doing.",
+    category: "Motivation",
+  },
+  {
+    text: "Life is what happens when you're busy making other plans.",
+    category: "Life",
+  },
+  {
+    text: "The purpose of our lives is to be happy.",
+    category: "Life",
+  },
 ];
 
 function showRandomQuote() {
@@ -28,19 +37,19 @@ function addQuote() {
 }
 
 function createAddQuoteForm() {
-  const formContainer = document.createElement('div');
+  const formContainer = document.createElement("div");
 
-  const inputText = document.createElement('input');
-  inputText.id = 'newQuoteText';
-  inputText.placeholder = 'Enter a new quote';
+  const inputText = document.createElement("input");
+  inputText.id = "newQuoteText";
+  inputText.placeholder = "Enter a new quote";
 
-  const inputCategory = document.createElement('input');
-  inputCategory.id = 'newQuoteCategory';
-  inputCategory.placeholder = 'Enter quote category';
+  const inputCategory = document.createElement("input");
+  inputCategory.id = "newQuoteCategory";
+  inputCategory.placeholder = "Enter quote category";
 
-  const addButton = document.createElement('button');
-  addButton.textContent = 'Add Quote';
-  addButton.addEventListener('click', addQuote);
+  const addButton = document.createElement("button");
+  addButton.textContent = "Add Quote";
+  addButton.addEventListener("click", addQuote);
 
   formContainer.appendChild(inputText);
   formContainer.appendChild(inputCategory);
