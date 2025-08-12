@@ -97,18 +97,32 @@ function showConflictNotification(message) {
   document.body.insertBefore(notice, document.body.firstChild);
 }
 
+async function fetchQuotesFromServer() {
+  const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');
+  const serverData = await response.json();
+
+  return serverData.map(post => ({
+    text: post.body,
+    category: post.title
+  }));
+}
+
+async function postQuotesToServer(quotesToPost) {
+  try {
+    await fetch('https://jsonplaceholder.typicode.com/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(quotesToPost)
+    });
+  } catch (error) {
+    console.error("Error posting quotes to server:", error);
+  }
+}
+
 async function syncQuotes() {
   try {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');
-    const serverData = await response.json();
-
-    const serverQuotes = serverData.map(post => ({
-      text: post.body,
-      category: post.title
-    }));
-
-    const localData = localStorage.getItem('quotes');
-    const localQuotes = localData ? JSON.parse(localData) : [];
+    const serverQuotes = await fetchQuotesFromServer();
+    const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
 
     const hasConflict = JSON.stringify(serverQuotes) !== JSON.stringify(localQuotes);
 
@@ -118,22 +132,9 @@ async function syncQuotes() {
       showConflictNotification("Conflict detected: Server data has replaced local data.");
     }
 
+    await postQuotesToServer(quotes);
   } catch (error) {
     console.error("Error syncing quotes:", error);
-  }
-}
-
-async function postQuotesToServer() {
-  try {
-    await fetch('https://jsonplaceholder.typicode.com/posts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(quotes)
-    });
-  } catch (error) {
-    console.error("Error posting quotes to server:", error);
   }
 }
 
