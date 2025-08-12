@@ -1,24 +1,34 @@
 let quotes = [
-  { text: "The only way to do great work is to love what you do.", category: "Inspiration" },
-  { text: "Life is what happens when you're busy making other plans.", category: "Life" },
-  { text: "Get busy living or get busy dying.", category: "Motivation" }
+  { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
+  { text: "In the middle of every difficulty lies opportunity.", category: "Inspiration" },
+  { text: "Life is 10% what happens to us and 90% how we react to it.", category: "Life" }
 ];
 
 function showRandomQuote() {
-  let randomIndex = Math.floor(Math.random() * quotes.length);
-  let randomQuote = quotes[randomIndex];
-  document.getElementById("quoteDisplay").innerHTML = `"${randomQuote.text}" - ${randomQuote.category}`;
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  const quoteDisplay = document.getElementById("quoteDisplay");
+  quoteDisplay.textContent = `"${quotes[randomIndex].text}" — ${quotes[randomIndex].category}`;
+}
+
+function createAddQuoteForm() {
+  return document.querySelector("#newQuoteText") && document.querySelector("#newQuoteCategory");
 }
 
 function addQuote() {
-  let newQuoteText = document.getElementById("newQuoteText").value;
-  let newQuoteCategory = document.getElementById("newQuoteCategory").value;
+  const newQuoteText = document.getElementById("newQuoteText").value.trim();
+  const newQuoteCategory = document.getElementById("newQuoteCategory").value.trim();
 
   if (newQuoteText && newQuoteCategory) {
     quotes.push({ text: newQuoteText, category: newQuoteCategory });
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
+    alert("New quote added successfully!");
+  } else {
+    alert("Please enter both a quote and a category.");
   }
 }
 
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+document.getElementById("addQuoteBtn").addEventListener("click", addQuote);
+
+showRandomQuote();
